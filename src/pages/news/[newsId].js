@@ -1,4 +1,5 @@
 import RootLayout from "@/components/Layouts/RootLayout";
+import { useGetSingleNewsQuery } from "@/redux/api/api";
 import {
   CalendarOutlined,
   CommentOutlined,
@@ -6,7 +7,13 @@ import {
 } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import Image from "next/image";
-const NewsDetailsPage = ({ news }) => {
+import { useRouter } from "next/router";
+const NewsDetailsPage = () => {
+  const router = useRouter();
+  const { newsId } = router.query;
+
+  const { data, isLoading, isError, error } = useGetSingleNewsQuery(newsId);
+
   return (
     <div
       style={{
@@ -20,7 +27,7 @@ const NewsDetailsPage = ({ news }) => {
         <Col span={12}>
           <div>
             <Image
-              src={news?.image_url}
+              src={data?.image_url}
               width={500}
               height={300}
               responsive
@@ -30,7 +37,7 @@ const NewsDetailsPage = ({ news }) => {
         </Col>
         <Col span={12}>
           <div>
-            <h1 style={{ fontSize: "50px" }}>{news?.title}</h1>
+            <h1 style={{ fontSize: "50px" }}>{data?.title}</h1>
             <div
               className="line"
               style={{
@@ -51,17 +58,17 @@ const NewsDetailsPage = ({ news }) => {
               }}
             >
               <span>
-                <CalendarOutlined /> {news?.release_date}
+                <CalendarOutlined /> {data?.release_date}
               </span>
               <span>
-                <CommentOutlined /> {news?.comment_count} COMMENTS
+                <CommentOutlined /> {data?.comment_count} COMMENTS
               </span>
               <span>
-                <ProfileOutlined /> {news?.category}
+                <ProfileOutlined /> {data?.category}
               </span>
             </p>
 
-            <p style={{ fontSize: "20px" }}>{news?.description}</p>
+            <p style={{ fontSize: "20px" }}>{data?.description}</p>
           </div>
         </Col>
       </Row>
@@ -75,7 +82,7 @@ NewsDetailsPage.getLayout = function getLayout(page) {
   return <RootLayout>{page}</RootLayout>;
 };
 
-export const getStaticPaths = async () => {
+/* export const getStaticPaths = async () => {
   const res = await fetch("http://localhost:5000/news");
   const newses = await res.json();
 
@@ -87,9 +94,9 @@ export const getStaticPaths = async () => {
     paths,
     fallback: false,
   };
-};
+}; */
 
-export const getStaticProps = async (context) => {
+/* export const getServerSideProps = async (context) => {
   const { params } = context;
   const res = await fetch(`http://localhost:5000/news/${params.newsId}`);
   const data = await res.json();
@@ -99,4 +106,4 @@ export const getStaticProps = async (context) => {
       news: data,
     },
   };
-};
+}; */
